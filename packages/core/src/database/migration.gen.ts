@@ -40,5 +40,11 @@ export const migrations = (
     import("./migration/20260622142730_simplify_session_context_epoch"),
     import("./migration/20260622170816_reset_v2_session_state"),
     import("./migration/20260622202450_simplify_session_input"),
+    import("./migration/20260702120000_pentest_target"),
+    import("./migration/20260702120001_pentest_finding"),
+    import("./migration/20260702120002_pentest_credential"),
+    import("./migration/20260702120003_pentest_attack_chain"),
+    import("./migration/20260702120004_pentest_capability"),
+    import("./migration/20260702120005_pentest_hypothesis"),
   ])
 ).map((module) => module.default) satisfies DatabaseMigration.Migration[]
