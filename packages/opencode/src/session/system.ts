@@ -43,7 +43,7 @@ export function provider(model: Provider.Model) {
 }
 
 export interface Interface {
-  readonly environment: (model: Provider.Model, sessionID?: string) => Effect.Effect<string[]>
+  readonly environment: (model: Provider.Model, sessionID?: string, currentStep?: number) => Effect.Effect<string[]>
   readonly skills: (agent: Agent.Info) => Effect.Effect<string | undefined>
   readonly mcp: (agent: Agent.Info, permission?: PermissionV1.Ruleset) => Effect.Effect<string | undefined>
 }
@@ -58,7 +58,7 @@ const layer = Layer.effect(
     const locations = yield* LocationServiceMap.Service
 
     return Service.of({
-      environment: Effect.fn("SystemPrompt.environment")(function* (model: Provider.Model, sessionID?: string) {
+      environment: Effect.fn("SystemPrompt.environment")(function* (model: Provider.Model, sessionID?: string, currentStep?: number) {
         const ctx = yield* InstanceState.context
         const references = yield* Effect.gen(function* () {
           return (yield* (yield* Reference.Service).list()).filter((reference) => reference.description !== undefined)
@@ -66,7 +66,7 @@ const layer = Layer.effect(
         
         // Build pentest context from persistent attack graph
         const pentestContext = sessionID 
-          ? yield* buildPentestContext(sessionID).pipe(
+          ? yield* buildPentestContext(sessionID, currentStep).pipe(
               Effect.catchAll(() => Effect.succeed(undefined))
             )
           : undefined
